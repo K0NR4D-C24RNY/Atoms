@@ -5,9 +5,19 @@ import matplotlib.pyplot as map
 
 directions = ['N','NE','E','SE','S','SW','W','NW']
 
-plansza_y = 10
-plansza_x = 10
+plansza_y = 100
+plansza_x = 100
 plansza = numpy.zeros((plansza_x,plansza_y),dtype = int)    #inicjalizacja pol zerami dwuwymiarowej planszy plansza_x X plansza_y
+prawd = [0.15,0.1,0.15,0.1,0.15,0.1,0.15,0.1]
+dir1 = numpy.random.choice(directions,p = prawd)
+dir2 = numpy.random.choice(directions,p = prawd)
+neonBlue = '#099FFF'
+neonPink = '#FF00CC'
+neonGreen = '#00FF66'
+hydrogenColor = str(neonBlue)
+neonColor = str(neonPink)
+togetherColor = str(neonGreen)
+
 
 class Atom:
 
@@ -72,61 +82,42 @@ class Atom:
         elif plansza[self.pos_x][self.pos_y] == 1:    #jezeli flaga juz jest ustawiona, to oznacza, ze byl ktos inny
             plansza[self.pos_x][self.pos_y] = 2     #ustawia flage awaryjna, ktora informuje o incydencie (xD)
 
-        #print("pozycja y:",str(self.pos_y),"\npozycja x:",self.pos_x,"\nflaga pola:",plansza[self.pos_y][self.pos_x],"\n\n") #do logow
+        print("pos x:",str(self.pos_x),"\npozycja y:",self.pos_y,"\nflaga pola:",plansza[self.pos_x][self.pos_y],"\n\n") #do logow
         self.posHistory.append([(self.pos_x),(self.pos_y)])
 
         
 hydrogen = Atom()
 neon = Atom()
-prawd = [0.15,0.1,0.15,0.1,0.15,0.1,0.15,0.1]
-dir1 = numpy.random.choice(directions,p = prawd)
-dir2 = numpy.random.choice(directions,p = prawd)
-i = 0
-
 hydrogen.moveOnBoard(dir1)
 neon.moveOnBoard(dir2)
 #jest to po to, aby ominac bug zwiazany z tym, ze punkt startowy jest zawsze ten sam
 
-while i < 100:
+array = []
+i = 0
+while i < 256:
     dir1 = numpy.random.choice(directions,p = prawd)
     dir2 = numpy.random.choice(directions,p = prawd)
 
+    # if hydrogen.posHistory[i-1] == neon.posHistory[i-1]:
     if plansza[hydrogen.pos_x][hydrogen.pos_y] == 2:
         dir1 = dir2
+        print("\nhydrogen:\n")   #do logow
+        hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+        print("\nneon:\n")   #do logow
+        neon.moveOnBoard(dir2)
+        array.append(neon.posHistory.pop())
 
-    #print("\nhydrogen:\n")   #do logow
+    print("\nhydrogen:\n")   #do logow
     hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    #print("\nneon:\n")   #do logow
+    print("\nneon:\n")   #do logow
     neon.moveOnBoard(dir2)
+    
     i += 1
 
-neonBlue = '#099FFF'
-neonYellow = '#FF00CC'
-neonGreen = '#00FF66'
-hydrogenColor = str(neonBlue)
-neonColor = str(neonYellow)
-togetherColor = str(neonGreen)
-
-#########################################################################
-#Short version without different color in together case
-# map.plot(hydrogen.history_x,hydrogen.history_y,color = hydrogenColor)
-# map.plot(neon.history_x,neon.history_y, color = neonColor)
-#########################################################################
-
-map.ion()
-fig = map.figure()
-i = 0
-
-for idx,hydroPosHist in enumerate(hydrogen.posHistory):
-    neonPosHist = neon.posHistory[idx]
-    
-    if hydroPosHist == neonPosHist:
-        map.plot(hydroPosHist,marker = 'x',color = togetherColor,markeredgecolor = "red")
-        map.plot(neonPosHist,marker = 'x', color = togetherColor,markeredgecolor = "red")
-
-    else:
-        map.plot(hydroPosHist,marker = '*',color = hydrogenColor,markeredgecolor = "black")
-        map.plot(neonPosHist,marker = 'o', color = neonColor, markeredgecolor = "black")
-
+map.plot(*zip(*hydrogen.posHistory),marker = '*', color = hydrogenColor)
+map.plot(*zip(*neon.posHistory),marker = 'o',color = neonColor)
+if array.__len__ != 0:
+    map.plot(*zip(*array), marker = 'x', color = togetherColor)
 
 map.show()
+input("wciśnij jakiś klawisz mordo")
