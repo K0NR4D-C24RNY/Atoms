@@ -116,7 +116,7 @@ while i < 512:
 
 map.plot(*zip(*hydrogen.posHistory),marker = '*', color = hydrogenColor)
 map.plot(*zip(*neon.posHistory),marker = 'o',color = neonColor)
-if array.__len__ != 0:
+if contiguousAtoms.__len__ != 0:
     map.plot(*zip(*contiguousAtoms), marker = 'x', color = togetherColor)
 
 map.show()
