@@ -69,9 +69,6 @@ class Ludzik:
         if plansza[self.pos_x][self.pos_y] == 0:
             plansza[self.pos_x][self.pos_y] = 1 #ustawia flage, ze pole jest zajete
         
-        elif plansza[self.pos_x][self.pos_y] == 1:
-            #tutaj sie zaczyna zabawa xD
-            plansza[self.pos_x][self.pos_y] = 2
             
             print("pozycja y:",str(self.pos_y),"\npozycja x:",self.pos_x,"\nflaga pola:",plansza[self.pos_y][self.pos_x],"\n\n")
             map.plot(self.pos_x,self.pos_y,markerfacecolor=self.color,marker=self.marker)
