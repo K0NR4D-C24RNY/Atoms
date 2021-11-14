@@ -12,14 +12,10 @@ plansza = numpy.zeros((plansza_x,plansza_y),dtype = int)    #inicjalizacja pol z
 class Atom:
 
     def __init__(self) -> None:        
-        self.history_x = []     #aby stworzyc wykres
-        self.history_y = []     #aby stworzyc wykres
         self.pos_y = int(plansza_y/2)     #spawnuje sie ma srodku mapy
         self.pos_x = int(plansza_x/2)     #spawnuje sie na srodku mapy
-        self.history_x.append(self.pos_x)   #dodanie lokalizacji startowej do historii
-        self.history_y.append(self.pos_y)
-
-        pass
+        self.posHistory = [[self.pos_x,self.pos_y]]
+        self.posHistory.append([(self.pos_x),(self.pos_y)])
     
     def moveToDirection(self,dir) -> None:
         if dir == 'N':
@@ -54,8 +50,6 @@ class Atom:
             self.pos_y += 1
             self.pos_x += -1
 
-        pass
-
     def moveOnBoard(self,dir) -> None:
         plansza[self.pos_x][self.pos_y] = 0     #skoro schodzi z pola, usuwa flage, ze pole jest zajete
         self.moveToDirection(dir)
@@ -79,10 +73,7 @@ class Atom:
             plansza[self.pos_x][self.pos_y] = 2     #ustawia flage awaryjna, ktora informuje o incydencie (xD)
 
         #print("pozycja y:",str(self.pos_y),"\npozycja x:",self.pos_x,"\nflaga pola:",plansza[self.pos_y][self.pos_x],"\n\n") #do logow
-        self.history_x.append(self.pos_x)
-        self.history_y.append(self.pos_y)
-
-        pass
+        self.posHistory.append([(self.pos_x),(self.pos_y)])
 
         
 hydrogen = Atom()
@@ -109,8 +100,6 @@ while i < 100:
     neon.moveOnBoard(dir2)
     i += 1
 
-    pass
-
 neonBlue = '#099FFF'
 neonYellow = '#FF00CC'
 neonGreen = '#00FF66'
@@ -118,10 +107,6 @@ hydrogenColor = str(neonBlue)
 neonColor = str(neonYellow)
 togetherColor = str(neonGreen)
 
-lenHydro_x = len(hydrogen.history_x)
-lenHydro_y =  len(hydrogen.history_y)
-lenNeon_x = len(neon.history_x)
-lenNeon_y = len(neon.history_y)
 #########################################################################
 #Short version without different color in together case
 # map.plot(hydrogen.history_x,hydrogen.history_y,color = hydrogenColor)
@@ -131,20 +116,17 @@ lenNeon_y = len(neon.history_y)
 map.ion()
 fig = map.figure()
 i = 0
-while i < lenHydro_x or i < lenNeon_x:
-    # if hydrogen.history_x[i] == neon.history_x[i] and hydrogen.history_y[i] == neon.history_y[i]:
-    #     map.plot(hydrogen.history_x[i],hydrogen.history_y[i],'--',color = togetherColor)
-    #     map.plot(neon.history_x[i],neon.history_y[i],'--', color = togetherColor)
 
-    #     pass
+for idx,hydroPosHist in enumerate(hydrogen.posHistory):
+    neonPosHist = neon.posHistory[idx]
     
-    # else:
-        map.plot(hydrogen.history_x[i],hydrogen.history_y[i],'--',color = hydrogenColor)
-        map.plot(neon.history_x[i],neon.history_y[i],'--', color = neonColor)
+    if hydroPosHist == neonPosHist:
+        map.plot(hydroPosHist,marker = 'x',color = togetherColor,markeredgecolor = "red")
+        map.plot(neonPosHist,marker = 'x', color = togetherColor,markeredgecolor = "red")
 
-    fig.canvas.draw()
-    fig.canvas.flush_events()
-    i+=1
-    pass
+    else:
+        map.plot(hydroPosHist,marker = '*',color = hydrogenColor,markeredgecolor = "black")
+        map.plot(neonPosHist,marker = 'o', color = neonColor, markeredgecolor = "black")
+
 
 map.show()
