@@ -1,13 +1,11 @@
 #!/usr/bin/python3
-import random
 import numpy
 import matplotlib.pyplot as map
 
 directions = ['N','NE','E','SE','S','SW','W','NW']
-
-plansza_y = 100
-plansza_x = 100
-plansza = numpy.zeros((plansza_x,plansza_y),dtype = int)    #inicjalizacja pol zerami dwuwymiarowej planszy plansza_x X plansza_y
+board_y = 60
+board_x = 60
+board = numpy.zeros((board_x,board_y),dtype = int)    #inicjalizacja pol zerami dwuwymiarowej planszy board_x X board_y
 prawd = [0.15,0.1,0.15,0.1,0.15,0.1,0.15,0.1]
 dir1 = numpy.random.choice(directions,p = prawd)
 dir2 = numpy.random.choice(directions,p = prawd)
@@ -18,12 +16,11 @@ hydrogenColor = str(neonBlue)
 neonColor = str(neonPink)
 togetherColor = str(neonGreen)
 
-
 class Atom:
-
+    
     def __init__(self) -> None:        
-        self.pos_y = int(plansza_y/2)     #spawnuje sie ma srodku mapy
-        self.pos_x = int(plansza_x/2)     #spawnuje sie na srodku mapy
+        self.pos_y = numpy.random.randint(board_y/2 - 3,board_y/2 + 3)     #spawnuje sie w losowym miejscu środek +- 3
+        self.pos_x = numpy.random.randint(board_x/2 - 3,board_x/2 + 3)     #spawnuje sie w losowym miejscu środek +- 3
         self.posHistory = [[self.pos_x,self.pos_y]]
         self.posHistory.append([(self.pos_x),(self.pos_y)])
     
@@ -61,45 +58,46 @@ class Atom:
             self.pos_x += -1
 
     def moveOnBoard(self,dir) -> None:
-        plansza[self.pos_x][self.pos_y] = 0     #skoro schodzi z pola, usuwa flage, ze pole jest zajete
+        board[self.pos_x][self.pos_y] = 0     #skoro schodzi z pola, usuwa flage, ze pole jest zajete
         self.moveToDirection(dir)
-
-        if self.pos_y > plansza_y-1:
+        
+        ########################################################################################################################
+        # tutaj sprawdzamy tzw. corner case'y, czyli przypadki szczególne.
+        # W naszej sytuacji są to przypadki, gdy atom wyjdzie poza granice mapy
+        # rozwiązaniem jest przetransportowanie go na drugi koniec (przesuwam o 1 jednostkęm aby uniknąć sytuacji na krawędzi)
+        #######################################################################################################################
+        if self.pos_y >= board_y:
+            self.pos_y = board_y - 1
+        
+        if self.pos_y <= 0:
             self.pos_y = 1
         
-        if self.pos_y < 0:
-            self.pos_y = plansza_y-2
+        if self.pos_x >= board_x:
+            self.pos_x = board_x - 1
         
-        if self.pos_x > plansza_x-1:
+        if self.pos_x <= 0:
             self.pos_x = 1
-        
-        if self.pos_x < 0:
-            self.pos_x = plansza_x-2
 
-        if plansza[self.pos_x][self.pos_y] == 0:
-            plansza[self.pos_x][self.pos_y] = 1     #ustawia flage, ze pole jest zajete
+        if board[self.pos_x][self.pos_y] == 0:
+            board[self.pos_x][self.pos_y] = 1     #ustawia flage, ze pole jest zajete
         
-        elif plansza[self.pos_x][self.pos_y] == 1:    #jezeli flaga juz jest ustawiona, to oznacza, ze byl ktos inny
-            plansza[self.pos_x][self.pos_y] = 2     #ustawia flage awaryjna, ktora informuje o incydencie (xD)
+        elif board[self.pos_x][self.pos_y] == 1:    #jezeli flaga juz jest ustawiona, to oznacza, ze byl ktos inny
+            board[self.pos_x][self.pos_y] = 2     #ustawia flage awaryjna, ktora informuje o incydencie (xD)
 
-        # print("pos x:",str(self.pos_x),"\npozycja y:",self.pos_y,"\nflaga pola:",plansza[self.pos_x][self.pos_y],"\n\n") #do logow
+        # print("pos x:",str(self.pos_x),"\npozycja y:",self.pos_y,"\nflaga pola:",board[self.pos_x][self.pos_y],"\n\n") #do logow
         self.posHistory.append([(self.pos_x),(self.pos_y)])
 
         
 hydrogen = Atom()
 neon = Atom()
-hydrogen.moveOnBoard(dir1)
-neon.moveOnBoard(dir2)
-#jest to po to, aby ominac bug zwiazany z tym, ze punkt startowy jest zawsze ten sam
+contiguousAtoms = [] #tablica przechowujaca pozycje, gdy atomy sa na tej samej pozycji
 
-contiguousAtoms = []
 i = 0
 while i < 512:
     dir1 = numpy.random.choice(directions,p = prawd)
     dir2 = numpy.random.choice(directions,p = prawd)
 
-    # if hydrogen.posHistory[i-1] == neon.posHistory[i-1]:
-    if plansza[hydrogen.pos_x][hydrogen.pos_y] == 2:
+    if board[hydrogen.pos_x][hydrogen.pos_y] == 2:
         dir1 = dir2
         # print("\nhydrogen:\n")   #do logow
         hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
