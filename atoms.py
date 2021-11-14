@@ -82,7 +82,7 @@ class Atom:
         elif plansza[self.pos_x][self.pos_y] == 1:    #jezeli flaga juz jest ustawiona, to oznacza, ze byl ktos inny
             plansza[self.pos_x][self.pos_y] = 2     #ustawia flage awaryjna, ktora informuje o incydencie (xD)
 
-        print("pos x:",str(self.pos_x),"\npozycja y:",self.pos_y,"\nflaga pola:",plansza[self.pos_x][self.pos_y],"\n\n") #do logow
+        # print("pos x:",str(self.pos_x),"\npozycja y:",self.pos_y,"\nflaga pola:",plansza[self.pos_x][self.pos_y],"\n\n") #do logow
         self.posHistory.append([(self.pos_x),(self.pos_y)])
 
         
@@ -92,24 +92,24 @@ hydrogen.moveOnBoard(dir1)
 neon.moveOnBoard(dir2)
 #jest to po to, aby ominac bug zwiazany z tym, ze punkt startowy jest zawsze ten sam
 
-array = []
+contiguousAtoms = []
 i = 0
-while i < 256:
+while i < 512:
     dir1 = numpy.random.choice(directions,p = prawd)
     dir2 = numpy.random.choice(directions,p = prawd)
 
     # if hydrogen.posHistory[i-1] == neon.posHistory[i-1]:
     if plansza[hydrogen.pos_x][hydrogen.pos_y] == 2:
         dir1 = dir2
-        print("\nhydrogen:\n")   #do logow
+        # print("\nhydrogen:\n")   #do logow
         hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-        print("\nneon:\n")   #do logow
+        # print("\nneon:\n")   #do logow
         neon.moveOnBoard(dir2)
-        array.append(neon.posHistory.pop())
+        contiguousAtoms.append(neon.posHistory.pop())
 
-    print("\nhydrogen:\n")   #do logow
+    # print("\nhydrogen:\n")   #do logow
     hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    print("\nneon:\n")   #do logow
+    # print("\nneon:\n")   #do logow
     neon.moveOnBoard(dir2)
     
     i += 1
@@ -117,7 +117,6 @@ while i < 256:
 map.plot(*zip(*hydrogen.posHistory),marker = '*', color = hydrogenColor)
 map.plot(*zip(*neon.posHistory),marker = 'o',color = neonColor)
 if array.__len__ != 0:
-    map.plot(*zip(*array), marker = 'x', color = togetherColor)
+    map.plot(*zip(*contiguousAtoms), marker = 'x', color = togetherColor)
 
 map.show()
-input("wciśnij jakiś klawisz mordo")
