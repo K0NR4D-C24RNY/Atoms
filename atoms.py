@@ -91,30 +91,42 @@ class Atom:
 hydrogen = Atom()
 neon = Atom()
 contiguousAtoms = [] #tablica przechowujaca pozycje, gdy atomy sa na tej samej pozycji
+#inp = input("q - exit, else - start simulation: ")
 
-i = 0
-while i < 512:
-    dir1 = numpy.random.choice(directions,p = prawd)
-    dir2 = numpy.random.choice(directions,p = prawd)
+map.ion()
 
-    if board[hydrogen.pos_x][hydrogen.pos_y] == 2:
-        dir1 = dir2
+while True:
+    map.clf()
+    hydrogen.posHistory.clear()
+    neon.posHistory.clear()
+    contiguousAtoms.clear()
+    
+    i = 0
+    while i < 512:
+        dir1 = numpy.random.choice(directions,p = prawd)
+        dir2 = numpy.random.choice(directions,p = prawd)
+
+        if board[hydrogen.pos_x][hydrogen.pos_y] == 2:
+            dir1 = dir2
+            # print("\nhydrogen:\n")   #do logow
+            hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+            # print("\nneon:\n")   #do logow
+            neon.moveOnBoard(dir2)
+            contiguousAtoms.append(neon.posHistory.pop())
+
         # print("\nhydrogen:\n")   #do logow
         hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
         # print("\nneon:\n")   #do logow
         neon.moveOnBoard(dir2)
-        contiguousAtoms.append(neon.posHistory.pop())
+        
+        i += 1
 
-    # print("\nhydrogen:\n")   #do logow
-    hydrogen.moveOnBoard(dir1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    # print("\nneon:\n")   #do logow
-    neon.moveOnBoard(dir2)
+    map.plot(*zip(*hydrogen.posHistory),marker = '*', color = hydrogenColor)
+    map.plot(*zip(*neon.posHistory),marker = 'o',color = neonColor)
+    if contiguousAtoms.__len__ != 0:
+        map.plot(*zip(*contiguousAtoms), marker = 'x', color = togetherColor)
+
     
-    i += 1
-
-map.plot(*zip(*hydrogen.posHistory),marker = '*', color = hydrogenColor)
-map.plot(*zip(*neon.posHistory),marker = 'o',color = neonColor)
-if contiguousAtoms.__len__ != 0:
-    map.plot(*zip(*contiguousAtoms), marker = 'x', color = togetherColor)
-
-map.show()
+    inp = input("q - exit, enter - start simulation: ")
+    if inp == 'q':
+        break
